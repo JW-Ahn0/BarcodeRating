@@ -2,13 +2,15 @@ package com.example.myapplication;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Mall {
+import java.io.Serializable;
+
+public class Mall implements Serializable {
     @SerializedName("name")
     private String name ;
     @SerializedName("score")
-    private double score;
+    private String score;
     @SerializedName("review")
-    private int numOfReview;
+    private String numOfReview;
     @SerializedName("link")
     private String link;
 
@@ -20,19 +22,19 @@ public class Mall {
         this.name = name;
     }
 
-    public double getScore() {
+    public String getScore() {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(String score) {
         this.score = score;
     }
 
-    public int getNumOfReview() {
+    public String getNumOfReview() {
         return numOfReview;
     }
 
-    public void setNumOfReview(int numOfReview) {
+    public void setNumOfReview(String numOfReview) {
         this.numOfReview = numOfReview;
     }
 

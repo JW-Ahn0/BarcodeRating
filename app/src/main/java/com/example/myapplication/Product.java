@@ -2,22 +2,47 @@ package com.example.myapplication;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Product {
+public class Product implements Serializable {
 
-    @SerializedName("title")
-    private String title;
+
+    @SerializedName("type")
+    private String type;
     @SerializedName("img_Url")
     private String img_Url;
-    @SerializedName("total")
-    private double total;
-    @SerializedName("mall_List")
+    @SerializedName("List")
     private List<Mall> mall_List = null;
+    @SerializedName("title")
+    private String title;
+    @SerializedName("total_score")
+    private String total_score;
+    @SerializedName("total_review")
+    private String total_review ;
 
-    @Override
-    public String toString() {
-        return this.getTitle() +"\n" + this.getImg_Url() +"\n" + this.getTotal()+"\n";
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTotal_score() {
+        return total_score;
+    }
+
+    public void setTotal_score(String total_score) {
+        this.total_score = total_score;
+    }
+
+    public String getTotal_review() {
+        return total_review;
+    }
+
+    public void setTotal_review(String total_review) {
+        this.total_review = total_review;
     }
 
     public List<Mall> getMall_List() {
@@ -44,11 +69,4 @@ public class Product {
         this.img_Url = img_Url;
     }
 
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
 }

@@ -1,9 +1,12 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -19,6 +22,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -33,12 +37,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private Retrofit mRetrofit;
     private RetrofitAPI mRetrofitAPI;
     private Call<Product> mProductlist;
-    private Call<BookList> mBooklist;
 
     private ZXingScannerView scannerView;
-    private TextView txtResult;
 
-
+    private RecyclerView recyclerView;
+    private ArrayList<ProductModel> list;
+    private TextView scanwaiting ;
+    private Context context;
+    private Product result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -46,8 +52,9 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         setContentView(R.layout.activity_main);
 
         scannerView = (ZXingScannerView) findViewById(R.id.zxscan);
-        txtResult = (TextView) findViewById(R.id.txt_result);
-
+        scanwaiting = (TextView) findViewById(R.id.scanwaiting) ;
+        context = this;
+        list = new ArrayList<>();
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA)
                 .withListener(new PermissionListener() {
                     @Override
@@ -68,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
                     }
                 }).check();
+
     }
 
     @Override
@@ -84,29 +92,18 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     };
     @Override
     public void handleResult(Result rawResult) {
-        //here we can receive rawresult
-        txtResult.setText(rawResult.getText());
 
-        setRetrofitInit(); //1107추가
-        if(rawResult.getText().charAt(0)=='9')
-        {
-            Log.d("check","콜백 출발");
-            callBook(rawResult.getText());
-        }
-        else{
-            callProduct(rawResult.getText());
-        }
+        setRetrofitInit();
+        callProduct(rawResult.getText());
         //한번하고 멈추니 다시 실행
         Handler mHandler = new Handler();
         mHandler.postDelayed(myTask, 1000);
 
     }
 
-    /*1112 추가
-     */
     private void setRetrofitInit(){
         mRetrofit = new Retrofit.Builder()
-                .baseUrl("http://20.194.25.208/")
+                .baseUrl("http://20.194.25.208")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         mRetrofitAPI = mRetrofit.create(RetrofitAPI.class);
@@ -118,41 +115,20 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         mProductlist.enqueue(productCallback);
 
     }
-    private void callBook(String barcode) {
 
-        mBooklist = mRetrofitAPI.getBook(barcode);
-        mBooklist.enqueue(bookCallBack);
-
-    }
-    private Callback<BookList> bookCallBack = new Callback<BookList>(){
-
-
-        @Override
-        public void onResponse(Call<BookList> call, Response<BookList> response) {
-            BookList result = response.body();
-            List<Book> book = result.getBookList();
-            Log.d("check",book.get(0).getTitle());
-        }
-
-        @Override
-        public void onFailure(Call<BookList> call, Throwable t) {
-
-        }
-    };
     private Callback<Product> productCallback = new Callback<Product>() {
 
         @Override
         public void onResponse(Call<Product> call, Response<Product> response) {
-            Product result = response.body();
-            List<Mall> res = result.getMall_List();
-            Log.d("check",result.getTitle());
+            result = response.body();
             Log.d("check",result.getImg_Url());
-            Log.d("check",Double.toString(result.getTotal()));
-            List<Mall> mallList =  result.getMall_List();
-            Log.d("check",mallList.get(0).getName());
-            Log.d("check",String.valueOf(mallList.get(0).getNumOfReview()) );
-            Log.d("check",Double.toString(mallList.get(0).getScore()));
-            Log.d("check",mallList.get(0).getLink());
+            recyclerView = findViewById(R.id.recyclerView);
+            ProductModel product_model = new ProductModel(result.getTitle(),result.getImg_Url(),Float.valueOf(result.getTotal_score()));
+            list.add(product_model);
+            ProductAdapter adapter = new ProductAdapter(context,list,recyclerView,result);
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            recyclerView.setAdapter(adapter);
+            scanwaiting.setText("");
         }
         @Override
         public void onFailure(Call<Product> call, Throwable t) {

@@ -79,5 +79,7 @@ public class RecommendListActivity extends AppCompatActivity {
                 context.startActivity(intent);
             }
         });
+
     }
+
 }

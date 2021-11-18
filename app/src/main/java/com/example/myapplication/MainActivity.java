@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private TextView scanwaiting ;
     private Context context;
     private List<Product> result;
+    private List<List<Product>> resultlist;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         scanwaiting = (TextView) findViewById(R.id.scanwaiting) ;
         context = this;
         list = new ArrayList<>();
+        resultlist = new ArrayList<>();
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA)
                 .withListener(new PermissionListener() {
                     @Override
@@ -85,6 +87,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     protected void onDestroy(){
         scannerView.stopCamera();
         super.onDestroy();
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();  // Always call the superclass method first
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(myTask, 1000);
     }
 
     private Runnable myTask = new Runnable() {
@@ -124,39 +132,43 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         @Override
         public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
             result = response.body();
-            Product product = result.get(0);
-            recyclerView = findViewById(R.id.recyclerView);
-            if(product.getType().equals("barcode wrong or not in k-net")){
-                scanwaiting.setText("존재하지 않는 상품입니다.");
+            resultlist.add(result);
+            try {
+                Product product = result.get(0);
+                recyclerView = findViewById(R.id.recyclerView);
+                if (product.getType().equals("barcode wrong or not in k-net")) {
+                    scanwaiting.setText("존재하지 않는 상품입니다.");
+                } else {
+                    ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
+                    list.add(product_model);
+                    ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                    recyclerView.setAdapter(adapter);
+                    scanwaiting.setText("");
+                    adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+                        @Override
+                        public void onItemClick(MallListViewHolder holder, View view, int position) {
+                        }
+
+                        @Override
+                        public void onItemClick(ProductViewHolder holder, View view, int position) {
+                            Log.d("check", String.valueOf(position));
+                            if (resultlist.get(position).get(0).getType().equals("book")) {
+                                Intent intent = new Intent(context, MallListActivity.class);
+                                intent.putExtra("product", resultlist.get(position).get(0));
+                                context.startActivity(intent);
+                            } else {
+                                Intent intent = new Intent(context, RecommendListActivity.class);
+                                intent.putExtra("productList", (Serializable) resultlist.get(position));
+                                context.startActivity(intent);
+                            }
+
+                        }
+                    });
+                }
             }
-            else {
-                ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
-                list.add(product_model);
-                ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                recyclerView.setAdapter(adapter);
-                scanwaiting.setText("");
-                adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
-                    @Override
-                    public void onItemClick(MallListViewHolder holder, View view, int position) {
-                    }
-
-                    @Override
-                    public void onItemClick(ProductViewHolder holder, View view, int position) {
-                        if(product.getType().equals("book"))
-                        {
-                            Intent intent = new Intent(context, MallListActivity.class);
-                            intent.putExtra("product", product);
-                            context.startActivity(intent);
-                        }
-                        else{
-                            Intent intent = new Intent(context, RecommendListActivity.class);
-                            intent.putExtra("productList", (Serializable) result);
-                            context.startActivity(intent);
-                        }
-
-                    }
-                });
+            catch (Exception e){
+                scanwaiting.setText("다시 스캔해주세요!");
             }
         }
         @Override

@@ -14,11 +14,20 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
     public RatingBar ratingBar;
     public TextView score;
 
-    public ProductViewHolder(@NonNull View itemView) {
+    public ProductViewHolder(@NonNull View itemView,final OnRecyclerViewItemClickListener listener) {
         super(itemView);
         this.titleText = itemView.findViewById(R.id.title);
         this.imgUrl = itemView.findViewById(R.id.productImage);
         this.ratingBar = itemView.findViewById(R.id.ratingStar);
         this.score = itemView.findViewById(R.id.score);
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = getAdapterPosition();
+                if(listener !=null){
+                    listener.onItemClick(ProductViewHolder.this,v,position);
+                }
+            }
+        });
     }
 }

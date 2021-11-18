@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.Manifest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,7 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     private Retrofit mRetrofit;
     private RetrofitAPI mRetrofitAPI;
-    private Call<Product> mProductlist;
+    private Call<List<Product>> mProductlist;
 
     private ZXingScannerView scannerView;
 
@@ -44,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private ArrayList<ProductModel> list;
     private TextView scanwaiting ;
     private Context context;
-    private Product result;
+    private List<Product> result;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -116,22 +119,48 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
     }
 
-    private Callback<Product> productCallback = new Callback<Product>() {
+    private Callback<List<Product>> productCallback = new Callback<List<Product>>() {
 
         @Override
-        public void onResponse(Call<Product> call, Response<Product> response) {
+        public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
             result = response.body();
-            Log.d("check",result.getImg_Url());
+            Product product = result.get(0);
             recyclerView = findViewById(R.id.recyclerView);
-            ProductModel product_model = new ProductModel(result.getTitle(),result.getImg_Url(),Float.valueOf(result.getTotal_score()));
-            list.add(product_model);
-            ProductAdapter adapter = new ProductAdapter(context,list,recyclerView,result);
-            recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(adapter);
-            scanwaiting.setText("");
+            if(product.getType().equals("barcode wrong or not in k-net")){
+                scanwaiting.setText("존재하지 않는 상품입니다.");
+            }
+            else {
+                ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
+                list.add(product_model);
+                ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                recyclerView.setAdapter(adapter);
+                scanwaiting.setText("");
+                adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+                    @Override
+                    public void onItemClick(MallListViewHolder holder, View view, int position) {
+                    }
+
+                    @Override
+                    public void onItemClick(ProductViewHolder holder, View view, int position) {
+                        if(product.getType().equals("book"))
+                        {
+                            Intent intent = new Intent(context, MallListActivity.class);
+                            intent.putExtra("product", product);
+                            context.startActivity(intent);
+                        }
+                        else{
+                            Intent intent = new Intent(context, RecommendListActivity.class);
+                            intent.putExtra("productList", (Serializable) result);
+                            context.startActivity(intent);
+                        }
+
+                    }
+                });
+            }
         }
         @Override
-        public void onFailure(Call<Product> call, Throwable t) {
+        public void onFailure(Call<List<Product>> call, Throwable t) {
             t.printStackTrace();
             Log.d("check",t.getMessage());
         }

@@ -18,6 +18,9 @@
         android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".RecommendListActivity"
+            android:exported="false" />
+        <activity
             android:name=".MallListActivity"
             android:exported="false" />
         <activity

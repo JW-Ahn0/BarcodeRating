@@ -69,4 +69,12 @@ public class MallListAdapter extends RecyclerView.Adapter<MallListViewHolder> im
             listener.onItemClick(holder,view,position);
         }
     }
+
+    @Override
+    public void onItemClick(ProductViewHolder holder, View view, int position) {
+        if(listener!=null)
+        {
+            listener.onItemClick(holder,view,position);
+        }
+    }
 }

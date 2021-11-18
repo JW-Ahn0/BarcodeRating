@@ -27,6 +27,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 import retrofit2.Call;
@@ -109,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         //한번하고 멈추니 다시 실행
         Handler mHandler = new Handler();
         mHandler.postDelayed(myTask, 1000);
-
     }
 
     private void setRetrofitInit(){
@@ -132,39 +132,59 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         @Override
         public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
             result = response.body();
-            resultlist.add(result);
-            try {
-                Product product = result.get(0);
-                recyclerView = findViewById(R.id.recyclerView);
-                if (product.getType().equals("barcode wrong or not in k-net")) {
-                    scanwaiting.setText("존재하지 않는 상품입니다.");
-                } else {
-                    ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
-                    list.add(product_model);
-                    ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(context));
-                    recyclerView.setAdapter(adapter);
-                    scanwaiting.setText("");
-                    adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
-                        @Override
-                        public void onItemClick(MallListViewHolder holder, View view, int position) {
-                        }
+            int i = 0 ;
+            boolean dupliicate = false;
+            while(true){
 
-                        @Override
-                        public void onItemClick(ProductViewHolder holder, View view, int position) {
-                            Log.d("check", String.valueOf(position));
-                            if (resultlist.get(position).get(0).getType().equals("book")) {
-                                Intent intent = new Intent(context, MallListActivity.class);
-                                intent.putExtra("product", resultlist.get(position).get(0));
-                                context.startActivity(intent);
-                            } else {
-                                Intent intent = new Intent(context, RecommendListActivity.class);
-                                intent.putExtra("productList", (Serializable) resultlist.get(position));
-                                context.startActivity(intent);
+                if(i==resultlist.size()){
+                    break;
+                }
+                if(result.get(0).getTitle().equals(resultlist.get(i).get(0).getTitle())){
+                    dupliicate= true;
+                    break;
+                }
+                i++;
+            }
+            try {
+                if (!dupliicate) {
+                    resultlist.add(result);
+                    Product product = result.get(0);
+                    recyclerView = findViewById(R.id.recyclerView);
+                    if (product.getType().equals("barcode wrong or not in k-net")) {
+                        scanwaiting.setText("존재하지 않는 상품입니다.");
+                    } else {
+                        ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
+                        list.add(product_model);
+                        ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
+                        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                        recyclerView.setAdapter(adapter);
+                        scanwaiting.setText("");
+                        adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener() {
+                            @Override
+                            public void onItemClick(MallListViewHolder holder, View view, int position) {
                             }
 
-                        }
-                    });
+                            @Override
+                            public void onItemClick(ProductViewHolder holder, View view,
+                                                    int position) {
+                                Log.d("check", String.valueOf(position));
+                                try {
+                                    if (resultlist.get(position).get(0).getType().equals("book")) {
+                                        Intent intent = new Intent(context, MallListActivity.class);
+                                        intent.putExtra("product", resultlist.get(position).get(0));
+                                        context.startActivity(intent);
+                                    } else {
+                                        Intent intent = new Intent(context, RecommendListActivity.class);
+                                        intent.putExtra("productList", (Serializable) resultlist.get(position));
+                                        context.startActivity(intent);
+                                    }
+                                } catch (Exception e) {
+                                    Log.d("check", "터치관련에러");
+                                }
+
+                            }
+                        });
+                    }
                 }
             }
             catch (Exception e){

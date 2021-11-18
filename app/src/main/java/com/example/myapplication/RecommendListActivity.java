@@ -40,7 +40,10 @@ public class RecommendListActivity extends AppCompatActivity {
 
 
         ProductModel productModel = new ProductModel(productList.get(0).getTitle(),productList.get(0).getImg_Url(),Float.valueOf(productList.get(0).getTotal_score()));
-        pList.add(productModel);
+        if(!pList.contains(productModel))
+        {
+            pList.add(productModel);
+        }
         ProductAdapter pAdapter = new ProductAdapter(context,pList,proRecyclerView);
         proRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         proRecyclerView.setAdapter(pAdapter);
@@ -60,7 +63,11 @@ public class RecommendListActivity extends AppCompatActivity {
         for(int i = 1 ; i < productList.size();i++){
 
             productModel = new ProductModel(productList.get(i).getTitle(),productList.get(i).getImg_Url(),Float.valueOf(productList.get(i).getTotal_score()));
-            rList.add(productModel);
+
+            if(!rList.contains(productModel))
+            {
+                rList.add(productModel);
+            }
 
         }
         ProductAdapter rAdapter = new ProductAdapter(context,rList,recRecyclerView);

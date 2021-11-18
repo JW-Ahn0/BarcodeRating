@@ -36,7 +36,10 @@ public class MallListActivity extends AppCompatActivity {
         product =(Product) intent.getSerializableExtra("product");
 
         ProductModel productModel = new ProductModel(product.getTitle(),product.getImg_Url(),Float.valueOf(product.getTotal_score()));
-        pList.add(productModel);
+        if(!pList.contains(productModel))
+        {
+            pList.add(productModel);
+        }
         ProductAdapter pAdapter = new ProductAdapter(context,pList,proRecyclerView);
         proRecyclerView.setLayoutManager(new LinearLayoutManager(context));
         proRecyclerView.setAdapter(pAdapter);
@@ -46,14 +49,20 @@ public class MallListActivity extends AppCompatActivity {
             for(int i =0;i<2;i++)
             {
                 MallListModel mallListModel = new MallListModel(product.getMall_List().get(i).getScore(),product.getMall_List().get(i).getNumOfReview(),product.getMall_List().get(i).getName());
-                mList.add(mallListModel);
+                if(!mList.contains(mallListModel))
+                {
+                    mList.add(mallListModel);
+                }
             }
         }
         else{
             for(int i = 0 ; i<4;i++)
             {
                 MallListModel mallListModel = new MallListModel(product.getMall_List().get(i).getScore(),product.getMall_List().get(i).getNumOfReview(),product.getMall_List().get(i).getName());
-                mList.add(mallListModel);
+                if(!mList.contains(mallListModel))
+                {
+                    mList.add(mallListModel);
+                }
             }
         }
         MallListAdapter mAdapter = new MallListAdapter(context,mList,mallRecyclerView);

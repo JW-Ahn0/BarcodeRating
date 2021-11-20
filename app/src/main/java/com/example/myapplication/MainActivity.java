@@ -26,6 +26,7 @@ import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private Context context;
     private List<Product> result;
     private List<List<Product>> resultlist;
+
+    ProductAdapter adapter ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -58,9 +61,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         scannerView = (ZXingScannerView) findViewById(R.id.zxscan);
         scanwaiting = (TextView) findViewById(R.id.scanwaiting) ;
+        recyclerView = findViewById(R.id.recyclerView);
         context = this;
         list = new ArrayList<>();
         resultlist = new ArrayList<>();
+        adapter = new ProductAdapter(context, list, recyclerView);
         Dexter.withActivity(this).withPermission(Manifest.permission.CAMERA)
                 .withListener(new PermissionListener() {
                     @Override
@@ -92,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(myTask, 1000);
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();  // Always call the superclass method first
         Handler mHandler = new Handler();
         mHandler.postDelayed(myTask, 1000);
     }
@@ -132,30 +143,39 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         @Override
         public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
             result = response.body();
-            int i = 0 ;
-            boolean dupliicate = false;
-            while(true){
 
-                if(i==resultlist.size()){
-                    break;
+            int i = 0;
+            boolean dupliicate = false;
+            try {
+                while (true) {
+                    Log.d("check", String.valueOf(resultlist.size()) + "and " + String.valueOf(i));
+                    if (i == resultlist.size()) {
+                        break;
+                    }
+                    if (result.get(0).getTitle().equals(resultlist.get(i).get(0).getTitle())) {
+                        dupliicate = true;
+                        if (i != 0) {
+                            Collections.swap(list, i, 0);
+                            Collections.swap(resultlist, i, 0);
+                            adapter.notifyDataSetChanged();
+                        }
+                        break;
+                    }
+                    i++;
                 }
-                if(result.get(0).getTitle().equals(resultlist.get(i).get(0).getTitle())){
-                    dupliicate= true;
-                    break;
-                }
-                i++;
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             try {
                 if (!dupliicate) {
-                    resultlist.add(result);
+                    resultlist.add(0, result);
                     Product product = result.get(0);
-                    recyclerView = findViewById(R.id.recyclerView);
+
                     if (product.getType().equals("barcode wrong or not in k-net")) {
                         scanwaiting.setText("존재하지 않는 상품입니다.");
                     } else {
                         ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
-                        list.add(product_model);
-                        ProductAdapter adapter = new ProductAdapter(context, list, recyclerView);
+                        list.add(0, product_model);
                         recyclerView.setLayoutManager(new LinearLayoutManager(context));
                         recyclerView.setAdapter(adapter);
                         scanwaiting.setText("");
@@ -169,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                                                     int position) {
                                 Log.d("check", String.valueOf(position));
                                 try {
-                                    if (resultlist.get(position).get(0).getType().equals("book")) {
+                                    if (resultlist.get(position).get(0).getType().equals("book") || resultlist.get(position).size() == 1) {
                                         Intent intent = new Intent(context, MallListActivity.class);
                                         intent.putExtra("product", resultlist.get(position).get(0));
                                         context.startActivity(intent);
@@ -184,9 +204,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
                             }
                         });
+                        adapter.notifyDataSetChanged();
                     }
                 }
             }
+
             catch (Exception e){
                 scanwaiting.setText("다시 스캔해주세요!");
             }

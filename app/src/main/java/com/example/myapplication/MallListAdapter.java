@@ -51,6 +51,12 @@ public class MallListAdapter extends RecyclerView.Adapter<MallListViewHolder> im
         else if(mallListModel.getMall().equals("gmarket")){
             drawable = context.getResources().getDrawable(R.drawable.gmarket);
         }
+        else if(mallListModel.getMall().equals("yes24")){
+            drawable = context.getResources().getDrawable(R.drawable.yes24);
+        }
+        else if(mallListModel.getMall().equals("kyobo")){
+            drawable = context.getResources().getDrawable(R.drawable.kyobo);
+        }
         holder.mall.setImageDrawable(drawable);
     }
 

@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private List<Product> result;
     private List<List<Product>> resultlist;
 
+
     ProductAdapter adapter ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                     public void onPermissionGranted(PermissionGrantedResponse response) {
                         scannerView.setResultHandler(MainActivity.this);
                         scannerView.startCamera();
+                        scannerView.setAutoFocus(true);
                     }
 
                     @Override
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                         Toast.makeText(MainActivity.this, "You must accept", Toast.LENGTH_SHORT).show();
                         scannerView.setResultHandler(MainActivity.this);
                         scannerView.startCamera();
+                        scannerView.setAutoFocus(true);
                     }
 
                     @Override
@@ -111,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         @Override
         public void run() {
             scannerView.resumeCameraPreview(MainActivity.this);
+            scannerView.setAutoFocus(true);
         }
     };
     @Override

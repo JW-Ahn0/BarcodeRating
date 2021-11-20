@@ -147,20 +147,20 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         @Override
         public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
             result = response.body();
-
             int i = 0;
             boolean dupliicate = false;
             try {
                 while (true) {
-                    Log.d("check", String.valueOf(resultlist.size()) + "and " + String.valueOf(i));
                     if (i == resultlist.size()) {
                         break;
                     }
                     if (result.get(0).getTitle().equals(resultlist.get(i).get(0).getTitle())) {
                         dupliicate = true;
                         if (i != 0) {
-                            Collections.swap(list, i, 0);
-                            Collections.swap(resultlist, i, 0);
+                            list.add(0,list.get(i));
+                            list.remove(i+1);
+                            resultlist.add(0,resultlist.get(i));
+                            resultlist.remove(i+1);
                             adapter.notifyDataSetChanged();
                         }
                         break;
@@ -168,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                     i++;
                 }
             } catch (Exception e) {
+                Toast.makeText(context, "JSON 리턴 타입이 이상합니다.2", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
             try {
@@ -176,8 +177,10 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                     Product product = result.get(0);
 
                     if (product.getType().equals("barcode wrong or not in k-net")) {
-                        scanwaiting.setText("존재하지 않는 상품입니다.");
-                    } else {
+                        Toast.makeText(getApplicationContext(), "코리안넷에 등록되지않은 상품입니다.", Toast.LENGTH_LONG).show();
+                        resultlist.remove(0);
+                    }
+                    else {
                         ProductModel product_model = new ProductModel(product.getTitle(), product.getImg_Url(), Float.valueOf(product.getTotal_score()));
                         list.add(0, product_model);
                         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -189,9 +192,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                             }
 
                             @Override
-                            public void onItemClick(ProductViewHolder holder, View view,
-                                                    int position) {
-                                Log.d("check", String.valueOf(position));
+                            public void onItemClick(ProductViewHolder holder, View view, int position) {
                                 try {
                                     if (resultlist.get(position).get(0).getType().equals("book") || resultlist.get(position).size() == 1) {
                                         Intent intent = new Intent(context, MallListActivity.class);
@@ -203,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                                         context.startActivity(intent);
                                     }
                                 } catch (Exception e) {
-                                    Log.d("check", "터치관련에러");
+                                    Toast.makeText(context, "터치 관련 에러입니다. 내부에 물품이 존재하지않아요", Toast.LENGTH_LONG).show();
                                 }
 
                             }
@@ -214,13 +215,15 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
             }
 
             catch (Exception e){
-                scanwaiting.setText("다시 스캔해주세요!");
+                Toast.makeText(getApplicationContext(), "터치 관련 에러입니다. 내부에 물품이 존재하지않아요", Toast.LENGTH_LONG).show();
+
             }
         }
         @Override
         public void onFailure(Call<List<Product>> call, Throwable t) {
             t.printStackTrace();
             Log.d("check",t.getMessage());
+            Toast.makeText(context, "JSON 리턴 타입이 이상합니다.", Toast.LENGTH_SHORT).show();
         }
     };
 }

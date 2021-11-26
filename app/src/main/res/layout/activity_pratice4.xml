@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Pratice4">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pra4Top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:background="@drawable/box_shape2"/>
+    <TextView
+        android:id="@+id/pra4ProductScore"
+        style="@style/Text.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="세부 평점"
+        android:textSize="30dp">
+    </TextView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="20dp"
+        android:background="@drawable/box_shape2">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/pra4Middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/pra4TodayProduct"
+        style="@style/Text.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:text="오늘의 추천"
+        android:textSize="30dp">
+    </TextView>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:background="@drawable/box_shape2"
+        android:layout_margin="20dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/pra4Bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"/>
+
+        <ImageButton
+            android:id="@+id/pra4HomeButton"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="left|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/box_shape2"
+            android:src="@drawable/home">
+        </ImageButton>
+
+        <ImageButton
+            android:id="@+id/pra4ScanButton"
+            android:layout_width="70dp"
+            android:layout_height="50dp"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="10dp"
+            android:background="@drawable/box_shape2"
+            android:src="@drawable/barcode">
+        </ImageButton>
+    </FrameLayout>
+</LinearLayout>

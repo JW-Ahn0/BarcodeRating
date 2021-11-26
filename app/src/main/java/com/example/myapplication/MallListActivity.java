@@ -28,7 +28,6 @@ public class MallListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_mall_list);
         proRecyclerView = findViewById(R.id.mainRecyclerView);
         mallRecyclerView = findViewById(R.id.mallRecyclerView);
-
         pList = new ArrayList<>();
         mList = new ArrayList<>();
         context = this;
@@ -78,6 +77,11 @@ public class MallListActivity extends AppCompatActivity {
 
             @Override
             public void onItemClick(ProductViewHolder holder, View view, int position) {
+
+            }
+
+            @Override
+            public void onItemLongClick(ProductViewHolder holder, View view, int position) {
 
             }
         });

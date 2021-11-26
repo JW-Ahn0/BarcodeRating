@@ -59,6 +59,11 @@ public class RecommendListActivity extends AppCompatActivity {
                 intent.putExtra("product",productList.get(position));
                 context.startActivity(intent);
             }
+
+            @Override
+            public void onItemLongClick(ProductViewHolder holder, View view, int position) {
+
+            }
         });
         for(int i = 1 ; i < productList.size();i++){
 
@@ -84,6 +89,11 @@ public class RecommendListActivity extends AppCompatActivity {
                 Intent intent = new Intent(context,MallListActivity.class);
                 intent.putExtra("product",productList.get(position+1));
                 context.startActivity(intent);
+            }
+
+            @Override
+            public void onItemLongClick(ProductViewHolder holder, View view, int position) {
+
             }
         });
 

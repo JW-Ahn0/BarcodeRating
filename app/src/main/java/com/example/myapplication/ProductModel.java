@@ -5,6 +5,14 @@ public class ProductModel {
     String title;
     String imgurl;
     float score;
+    String barcode;
+
+    public ProductModel(String title, String imgurl, float score, String barcode) {
+        this.title = title;
+        this.imgurl = imgurl;
+        this.score = score;
+        this.barcode = barcode;
+    }
 
     public ProductModel(String title, String imgurl, float score) {
         this.title = title;
@@ -34,5 +42,13 @@ public class ProductModel {
 
     public void setScore(float score) {
         this.score = score;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }

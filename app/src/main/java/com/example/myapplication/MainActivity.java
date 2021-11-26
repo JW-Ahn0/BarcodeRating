@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     private List<Product> result;
     private List<List<Product>> resultlist;
 
-
     ProductAdapter adapter ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
         scannerView = (ZXingScannerView) findViewById(R.id.zxscan);
         scanwaiting = (TextView) findViewById(R.id.scanwaiting) ;
+
         recyclerView = findViewById(R.id.recyclerView);
         context = this;
         list = new ArrayList<>();
@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
                     }
                 }).check();
-
     }
 
     @Override
@@ -121,7 +120,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     public void handleResult(Result rawResult) {
 
         setRetrofitInit();
-        callProduct(rawResult.getText());
         //한번하고 멈추니 다시 실행
         Handler mHandler = new Handler();
         mHandler.postDelayed(myTask, 1000);
@@ -208,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
                                 }
 
                             }
+
+                            @Override
+                            public void onItemLongClick(ProductViewHolder holder, View view, int position) {
+
+                            }
                         });
                         adapter.notifyDataSetChanged();
                     }
@@ -216,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
 
             catch (Exception e){
                 Toast.makeText(getApplicationContext(), "터치 관련 에러입니다. 내부에 물품이 존재하지않아요", Toast.LENGTH_LONG).show();
-
             }
         }
         @Override

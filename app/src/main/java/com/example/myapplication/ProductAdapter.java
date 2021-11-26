@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,13 +19,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> impl
     ArrayList<ProductModel> list;
     RecyclerView recyclerView ;
     OnRecyclerViewItemClickListener listener;
-
     public ProductAdapter(Context context, ArrayList<ProductModel> list, RecyclerView recyclerView) {
         this.context = context;
         this.list = list;
         this.recyclerView = recyclerView;
     }
-
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -51,7 +50,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> impl
     public void setOnItemClickListener(OnRecyclerViewItemClickListener listener){
         this.listener = listener;
     }
-
     @Override
     public void onItemClick(MallListViewHolder holder, View view, int position) {
         if(listener!=null)
@@ -67,4 +65,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductViewHolder> impl
             listener.onItemClick(holder,view,position);
         }
     }
+
+    @Override
+    public void onItemLongClick(ProductViewHolder holder, View view, int position) {
+        if(listener!=null)
+        {
+            listener.onItemLongClick(holder,view,position);
+        }
+    }
+
 }

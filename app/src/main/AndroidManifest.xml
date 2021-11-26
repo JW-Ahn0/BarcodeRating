@@ -14,23 +14,42 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyApplication"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".RecommendListActivity"
-            android:exported="false" />
+            android:name=".Pratice4"
+            android:exported="false" >
+        </activity>
         <activity
-            android:name=".MallListActivity"
-            android:exported="false" />
+            android:name=".Pratice3"
+            android:exported="false">
+        </activity>
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".Pratice2"
+            android:exported="false" >
+
+        </activity>
+        <activity
+            android:name=".Pratice1"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".RecommendListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MallListActivity"
+            android:exported="false">
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
         </activity>
     </application>
 

@@ -29,5 +29,15 @@ public class ProductViewHolder extends RecyclerView.ViewHolder {
                 }
             }
         });
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int position = getAdapterPosition();
+                if(listener!=null){
+                    listener.onItemLongClick(ProductViewHolder.this,v,position);
+                }
+                return true;
+            }
+        });
     }
 }

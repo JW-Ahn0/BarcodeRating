@@ -34,14 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="right"
-            android:layout_marginRight="10dp">
             <RatingBar
                 android:id="@+id/mallRatingStar"
                 style="?android:attr/ratingBarStyleSmall"
@@ -50,6 +43,5 @@
                 android:numStars="5"
                 android:layout_marginRight="4dp"
                 android:layout_gravity="center_horizontal"/>
-        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
